@@ -1,103 +1,170 @@
+const { TransactionStatus, TransactionOutcome } = require("../models/transaction");
 
+describe('Wallet API Transactions', () => {
 
-let token = null;
-let userId = null;
-
-descirbe('Wallet Transactions', () => {
-
-    it.beforeEach(() => {
+    beforeEach(() => {
         cy.fixture('user').then((user) => {
-            cy.login(user.username, user.password)
-        })
+            cy.loginUser(user.username, user.password)
+                .then((response) => {
+                    expect(response.status).to.eq(200)
+                    expect(response.body).to.have.property("token", Cypress.env("token"))
+                    expect(response.body).to.have.property("userId", Cypress.env("userId"))
+                });
 
-        token = window.localStorage.getItem('token');
-        userId = window.localStorage.getItem('userId');
+            cy.getUserInfo()
+                .then((response) => {
+                    expect(response.status).to.eq(200)
+                    expect(response.body).to.have.property("walletId", Cypress.env("userId"))
+                });
+        });
+    })
+
+    it('should create transaction successfully', () => {
+
+        // Test all 3 currencies
+        const currencies = ['USD', 'EUR', 'GBP'];
+        currencies.forEach((currency) => {
+            cy.getWalletInfoEmpty()
+                .then((response) => {
+                    expect(response.status).to.eq(200)
+                    expect(response.body).to.have.property('walletId', Cypress.env('walletId'))
+                    expect(response.body.currencyClips).to.be.empty
+                });
+
+            cy.fixture('transaction').then((transaction) => {
+                const currentTransaction = {
+                    currency: transaction[currency].credit.currency,
+                    amount: transaction[currency].credit.amount,
+                    type: transaction[currency].credit.type
+                }
+                cy.processTransaction(currentTransaction)
+                    .then((response) => {
+                        expect(response.status).to.eq(200)
+                        expect(response.body).to.have.property('transactionId')
+                        expect(response.body).to.have.property('status', TransactionStatus.finished)
+                        expect(response.body).to.have.property('outcome', TransactionOutcome.approved)
+                    })
+
+                // Validate the transaction has been processed and wallet updated
+                cy.getWalletInfo()
+                    .then((response) => {
+                        expect(response.status).to.eq(200)
+                        expect(response.body).to.have.property('walletId', Cypress.env('walletId'))
+                        expect(response.body.currencyClips).to.have.length(3)
+                        expect(response.body.currencyClips.find(obj => obj.currency === `${currency}`)).to.have.property('currency', currentTransaction.currency)
+                        expect(response.body.currencyClips.find(obj => obj.currency === `${currency}`)).to.have.property('balance', currentTransaction.amount)
+                    })
+            });
+        });
     });
 
-    //User Info
 
-    it('should return a user information for a specific userId', () => {
-        cy.request({
-            method: 'GET',
-            url: `${apiWalletTransactionsUrl}/user/info/${userId}`,
-            headers: {
-                Authorization: `Bearer ${token}`
-            },
-        })
+    it('should not create transaction with invalid amount', () => {
+        cy.fixture('transaction').then((transaction) => {
+            const currentTransaction = {
+                currency: transaction.EUR.credit.currency,
+                amount: -1000,
+                type: transaction.EUR.credit.type
+            }
+
+            cy.getWalletInfoEmpty()
             .then((response) => {
                 expect(response.status).to.eq(200)
-                expect(response.body).to.have.property('id', 1)
-            })
-    });
+                expect(response.body).to.have.property('walletId', Cypress.env('walletId'))
+                expect(response.body.currencyClips).to.be.empty
+            });
 
-    //Wallet Transactions
+            cy.processTransactionBad(currentTransaction)
+                .then((response) => {
+                    expect(response.status).to.eq(400)
+                })
 
-    it('should return a wallet information', () => {
-        cy.fixture('wallet').then((wallet) => {
-            cy.request({
-                method: 'GET',
-                url: `${apiWalletTransactionsUrl}/wallet/${wallet.walletId}`,
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            })
+            cy.getWalletInfoEmpty()
                 .then((response) => {
                     expect(response.status).to.eq(200)
-                })
+                    expect(response.body).to.have.property('walletId', Cypress.env('userId'))
+                    expect(response.body.currencyClips).to.be.empty
+                });
         });
     });
 
-    it('should proccess a transaction for a wallet', () => {
-        cy.fixture('wallet').then((wallet) => {
-            cy.request({
-                method: 'POST',
-                url: `${apiWalletTransactionsUrl}/wallet/${walletId}/transaction`,
-                headers: {
-                    Authorization: `Bearer ${token}`
-                },
-                body: {
-                    currency: wallet.currency,
-                    amount: wallet.amount,
-                    type: wallet.type
-                }
-            })
-                .then((response) => {
-                    expect(response.status).to.eq(200)
-                    expect(response.body).to.have.property('transactionId')
-                    expect(response.body).to.have.property('status', 'finished')
-                    expect(response.body).to.have.property('outcome', 'approved')
-                })
-        });
-    });
 
-    it('should retrive a details of a specific transaction', () => {
-        cy.fixture('wallet').then((wallet) => {
-            cy.request({
-                method: 'GET',
-                url: `${apiWalletTransactionsUrl}/wallet/${wallet.walletId}/transaction/${wallet.transactionId}`,
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            })
-                .then((response) => {
-                    expect(response.status).to.eq(200)
-                    expect(response.body).to.have.property('amount', 200)
-                    expect(response.body).to.have.property('type', 'debit')
-                })
-        });
-    });
+    it('should not create transaction with unsupported currency', () => {
+        cy.fixture('transaction').then((transaction) => {
+            const currentTransaction = {
+                currency: 'XYZ',
+                amount: transaction.EUR.credit.amount,
+                type: transaction.EUR.credit.type
+            }
 
-    it('should retrive all transactions with pagination and date limits', () => {
-        cy.request({
-            method: 'GET',
-            url: `${apiWalletTransactionsUrl}/wallet-transactions/${userId}`,
-            headers: {
-                Authorization: `Bearer ${token}`
-            },
-        })
+            cy.getWalletInfoEmpty()
             .then((response) => {
                 expect(response.status).to.eq(200)
-            })
+                expect(response.body).to.have.property('walletId', Cypress.env('walletId'))
+                expect(response.body.currencyClips).to.be.empty
+            });
+
+            cy.processTransactionBad(currentTransaction)
+                .then((response) => {
+                    expect(response.status).to.eq(400)
+                })
+
+            cy.getWalletInfoEmpty()
+                .then((response) => {
+                    expect(response.status).to.eq(200)
+                    expect(response.body).to.have.property('walletId', Cypress.env('userId'))
+                    expect(response.body.currencyClips).to.be.empty
+                });
+        });
     });
 
+    it('should not create transaction without transaction type', () => {
+        cy.fixture('transaction').then((transaction) => {
+            const currentTransaction = {
+                currency: transaction.EUR.credit.currency,
+                amount: transaction.EUR.credit.amount
+            }
+
+            cy.getWalletInfoEmpty()
+            .then((response) => {
+                expect(response.status).to.eq(200)
+                expect(response.body).to.have.property('walletId', Cypress.env('walletId'))
+                expect(response.body.currencyClips).to.be.empty
+            });
+
+            cy.processTransactionBad(currentTransaction)
+                .then((response) => {
+                    expect(response.status).to.eq(400)
+                })
+
+            cy.getWalletInfoEmpty()
+                .then((response) => {
+                    expect(response.status).to.eq(200)
+                    expect(response.body).to.have.property('walletId', Cypress.env('userId'))
+                    expect(response.body.currencyClips).to.be.empty
+                });
+        });
+    });
+
+    it('should not create transaction with exceeding limits', () => {
+        cy.fixture('transaction').then((transaction) => {
+            const currentTransaction = {
+                currency: transaction.EUR.credit.currency,
+                amount: 1000000000,
+                type: transaction.EUR.credit.type
+            }
+
+            cy.processTransactionBad(currentTransaction)
+                .then((response) => {
+                    expect(response.status).to.eq(400)
+                })
+
+            cy.getWalletInfoEmpty()
+                .then((response) => {
+                    expect(response.status).to.eq(200)
+                    expect(response.body).to.have.property('walletId', Cypress.env('userId'))
+                    expect(response.body.currencyClips).to.be.empty
+                });
+        })
+    });
 });

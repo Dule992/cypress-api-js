@@ -9,26 +9,39 @@
      - Response status code is 201.
      - Response body contains `transactionId`.
 
-2. **Create Transaction with Invalid Data**
-   - **Description**: Test creating a transaction with invalid data (e.g., invalid amount).
+2. **Create Transaction with Invalid Amount**
+   - **Description**: Test creating a transaction with an invalid amount.
    - **Priority**: High
    - **Assertions**:
      - Response status code is 400.
 
-3. **Additional Test Cases**
-   - **Description**: Placeholder for additional test cases.
+3. **Create Transaction with Unsupported Currency**
+   - **Description**: Test creating a transaction with an unsupported currency.
    - **Priority**: Medium
-   - **Assertions**: Placeholder.
+   - **Assertions**:
+     - Response status code is 400.
+
+4. **Create Transaction Without Transaction Type**
+   - **Description**: Test creating a transaction without a transaction type.
+   - **Priority**: Medium
+   - **Assertions**:
+     - Response status code is 400.
+
+5. **Create Transaction with Exceeding Limits**
+   - **Description**: Test creating a transaction with an amount exceeding predefined limits.
+   - **Priority**: Medium
+   - **Assertions**:
+     - Response status code is 400.
 
 ## Unimplemented Test Cases
 
-1. **Transaction with Unsupported Currency**
-   - **Description**: Test creating a transaction with an unsupported currency.
-   - **Priority**: Medium
+1. **Transaction with Future Date**
+   - **Description**: Test creating a transaction with a future date.
+   - **Priority**: Low
 
-2. **Exceeding Transaction Limits**
-   - **Description**: Test creating a transaction that exceeds predefined limits.
-   - **Priority**: Medium
+2. **Transaction with Past Date**
+   - **Description**: Test creating a transaction with a past date.
+   - **Priority**: Low
 
 3. **Concurrent Transactions**
    - **Description**: Test multiple concurrent transactions to the same wallet.

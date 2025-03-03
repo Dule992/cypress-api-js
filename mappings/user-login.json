@@ -1,0 +1,25 @@
+{
+    "request": {
+        "method": "POST",
+        "url": "/api/v1/user/login",
+        "bodyPatterns": [
+            {
+                "matchesJsonSchema": {
+                    "required": [
+                        "username",
+                        "password"
+                    ]
+                }
+            }
+        ]
+    },
+    "response": {
+        "status": 200,
+        "jsonBody": {
+            "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c",
+            "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwic2NvcGUiOiJyZWZyZXNoIiwiaWF0IjoxNTE2MjM5MDIyfQ.TZg262l54FnzFuSzi8F5J3W9s61iS0L681WnTJ0k8k0",
+            "expiry": "2024-11-01T01:00:00Z",
+            "userId": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+        }
+    }
+}

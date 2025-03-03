@@ -1,0 +1,38 @@
+{
+    "USD": {
+        "credit": {
+            "currency": "USD",
+            "amount": 1000,
+            "type": "credit"
+        },
+        "debit": {
+            "currency": "USD",
+            "amount": 1000,
+            "type": "debit"
+        }
+    },
+    "EUR": {
+        "credit": {
+            "currency": "EUR",
+            "amount": 1000,
+            "type": "credit"
+        },
+        "debit": {
+            "currency": "EUR",
+            "amount": 1000,
+            "type": "debit"
+        }
+    },
+    "GBP": {
+        "credit": {
+            "currency": "GBP",
+            "amount": 1000,
+            "type": "credit"
+        },
+        "debit": {
+            "currency": "GBP",
+            "amount": 1000,
+            "type": "debit"
+        }
+    }
+}

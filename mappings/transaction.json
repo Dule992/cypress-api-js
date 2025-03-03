@@ -1,0 +1,35 @@
+{
+    "request": {
+        "method": "POST",
+        "url": "/api/v1/wallet/3fa85f64-5717-4562-b3fc-2c963f66afa6/transaction",
+        "headers": {
+            "Authorization": {
+                "equalTo": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+            }
+        },
+        "bodyPatterns": [
+            {
+                "matchesJsonSchema": {
+                    "required": [
+                        "currency",
+                        "amount",
+                        "type"
+                    ]
+                }
+            }
+        ]
+    },
+    "response": {
+        "status": 200,
+        "headers": {
+            "Content-Type": "application/json"
+        },
+        "jsonBody": {
+            "transactionId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+            "status": "finished",
+            "outcome": "approved",
+            "createdAt": "2025-03-04T05:30:00Z",
+            "updatedAt": "2025-03-04T05:30:00Z"
+        }
+    }
+}
