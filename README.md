@@ -35,6 +35,10 @@ npm run cypress:run
 
 To open the Test Reports navigate to mochaawesome-report folder after execution tests in headless mode and open html file.
 
+Here is an example screenshot of the test report:
+
+![Test Report Screenshot](mochawesome-report.png)
+
 ## Dependencies
 
 - Cypress
