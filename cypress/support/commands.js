@@ -97,7 +97,8 @@ Cypress.Commands.add('getWalletInfoEmpty', () => {
             url: `${apiWalletTransactionsUrl}/wallet/${Cypress.env('walletId')}/empty`,
             headers: {
                 Authorization: `Bearer ${Cypress.env('token')}`
-            }
+            },
+            failOnStatusCode: false
         });
     } catch (error) {
         if (error.response) {
@@ -153,7 +154,8 @@ Cypress.Commands.add('processTransactionBad', (transaction) => {
                 currency: transaction.currency,
                 amount: transaction.amount,
                 type: transaction.type
-            }
+            },
+            failOnStatusCode: false
         });
     } catch (error) {
         if (error.response) {

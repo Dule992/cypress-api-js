@@ -9,7 +9,7 @@ describe('Wallet API Transactions', () => {
                     expect(response.status).to.eq(200)
                     expect(response.body).to.have.property("token", Cypress.env("token"))
                     expect(response.body).to.have.property("userId", Cypress.env("userId"))
-                });
+                })
 
             cy.getUserInfo()
                 .then((response) => {
@@ -17,7 +17,8 @@ describe('Wallet API Transactions', () => {
                     expect(response.body).to.have.property("walletId", Cypress.env("userId"))
                 });
         });
-    })
+    });
+
 
     it('should create transaction successfully', () => {
 
@@ -28,7 +29,7 @@ describe('Wallet API Transactions', () => {
                 .then((response) => {
                     expect(response.status).to.eq(200)
                     expect(response.body).to.have.property('walletId', Cypress.env('walletId'))
-                    expect(response.body.currencyClips).to.be.empty
+                    expect(response.body.currencyClips).to.have.length(0)
                 });
 
             cy.fixture('transaction').then((transaction) => {
@@ -68,11 +69,11 @@ describe('Wallet API Transactions', () => {
             }
 
             cy.getWalletInfoEmpty()
-            .then((response) => {
-                expect(response.status).to.eq(200)
-                expect(response.body).to.have.property('walletId', Cypress.env('walletId'))
-                expect(response.body.currencyClips).to.be.empty
-            });
+                .then((response) => {
+                    expect(response.status).to.eq(200)
+                    expect(response.body).to.have.property('walletId', Cypress.env('walletId'))
+                    expect(response.body.currencyClips).to.have.length(0)
+                });
 
             cy.processTransactionBad(currentTransaction)
                 .then((response) => {
@@ -83,11 +84,10 @@ describe('Wallet API Transactions', () => {
                 .then((response) => {
                     expect(response.status).to.eq(200)
                     expect(response.body).to.have.property('walletId', Cypress.env('userId'))
-                    expect(response.body.currencyClips).to.be.empty
+                    expect(response.body.currencyClips).to.have.length(0)
                 });
         });
     });
-
 
     it('should not create transaction with unsupported currency', () => {
         cy.fixture('transaction').then((transaction) => {
@@ -98,11 +98,11 @@ describe('Wallet API Transactions', () => {
             }
 
             cy.getWalletInfoEmpty()
-            .then((response) => {
-                expect(response.status).to.eq(200)
-                expect(response.body).to.have.property('walletId', Cypress.env('walletId'))
-                expect(response.body.currencyClips).to.be.empty
-            });
+                .then((response) => {
+                    expect(response.status).to.eq(200)
+                    expect(response.body).to.have.property('walletId', Cypress.env('walletId'))
+                    expect(response.body.currencyClips).to.have.length(0)
+                });
 
             cy.processTransactionBad(currentTransaction)
                 .then((response) => {
@@ -113,7 +113,7 @@ describe('Wallet API Transactions', () => {
                 .then((response) => {
                     expect(response.status).to.eq(200)
                     expect(response.body).to.have.property('walletId', Cypress.env('userId'))
-                    expect(response.body.currencyClips).to.be.empty
+                    expect(response.body.currencyClips).to.have.length(0)
                 });
         });
     });
@@ -126,11 +126,11 @@ describe('Wallet API Transactions', () => {
             }
 
             cy.getWalletInfoEmpty()
-            .then((response) => {
-                expect(response.status).to.eq(200)
-                expect(response.body).to.have.property('walletId', Cypress.env('walletId'))
-                expect(response.body.currencyClips).to.be.empty
-            });
+                .then((response) => {
+                    expect(response.status).to.eq(200)
+                    expect(response.body).to.have.property('walletId', Cypress.env('walletId'))
+                    expect(response.body.currencyClips).to.have.length(0)
+                });
 
             cy.processTransactionBad(currentTransaction)
                 .then((response) => {
@@ -141,7 +141,7 @@ describe('Wallet API Transactions', () => {
                 .then((response) => {
                     expect(response.status).to.eq(200)
                     expect(response.body).to.have.property('walletId', Cypress.env('userId'))
-                    expect(response.body.currencyClips).to.be.empty
+                    expect(response.body.currencyClips).to.have.length(0)
                 });
         });
     });
@@ -163,7 +163,7 @@ describe('Wallet API Transactions', () => {
                 .then((response) => {
                     expect(response.status).to.eq(200)
                     expect(response.body).to.have.property('walletId', Cypress.env('userId'))
-                    expect(response.body.currencyClips).to.be.empty
+                    expect(response.body.currencyClips).to.have.length(0)
                 });
         })
     });
